@@ -21,7 +21,6 @@ A simple app for managing and tracking nutrition tips using Retrieval-Augmented 
 ```bash
 git clone https://github.com/Youssef-Ai1001/Rag-Nutrition.git
 cd Rag-Nutrition
-pip install -r requirements.txt
 ```
 
 ### Install the required packages
@@ -35,18 +34,19 @@ pip install -r requirements.txt
 ```bash
 cp .env.example .env
 ```
-#### Set your environment variables in the .env file. Like OPENAI_API_KEY value.
+Set your environment variables in the `.env` file. Like `OPENAI_API_KEY` value.
 
 
 
 
-## Usage
+## Run the FastAPI server
 
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 5000
+```
 
-
-## Configuration
-
-
+## POSTMAN Collection
+Download the POSTMAN collection from [/assets/mini-rag-app.postman_collection.json](assets/RAG-APP.postman_collection.json)
 
 ### (Optional) Setup you command line interface for better readability
 
