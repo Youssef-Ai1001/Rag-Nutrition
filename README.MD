@@ -24,6 +24,20 @@ cd Rag-Nutrition
 pip install -r requirements.txt
 ```
 
+### Install the required packages
+
+```bash
+pip install -r requirements.txt
+```
+
+### Setup the environment variables
+
+```bash
+cp .env.example .env
+```
+
+
+
 ## Usage
 
 
@@ -31,6 +45,12 @@ pip install -r requirements.txt
 ## Configuration
 
 
+
+### (Optional) Setup you command line interface for better readability
+
+```bash
+export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
+```
 
 ## License
 
