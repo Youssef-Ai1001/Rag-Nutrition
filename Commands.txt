@@ -1,0 +1,15 @@
+sudo docker stop $(sudo docker ps -aq)
+
+sudo docker rm $(sudo docker ps -aq)
+
+sudo docker rmi $(sudo docker images -q)
+
+sudo docker volume rm $(docker volume ls -q)
+
+docker system prune --all 
+
+        This will remove:
+            - all stopped containers
+            - all networks not used by at least one container
+            - all images without at least one container associated to them
+            - all build cache
