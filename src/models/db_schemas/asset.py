@@ -1,10 +1,16 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime, timezone
+from bson.objectid import ObjectId
 
 class Asset(BaseModel):
-    id: Optional[str] = Field(default=None, alias="_id")
-    asset_project_id: str
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        populate_by_name=True
+    )
+    
+    id: Optional[ObjectId] = Field(default=None, alias="_id")
+    asset_project_id: ObjectId
     asset_type: str = Field(..., min_length=1)
     asset_name: str = Field(..., min_length=1)
     asset_size: int = Field(ge=0,default=None)
