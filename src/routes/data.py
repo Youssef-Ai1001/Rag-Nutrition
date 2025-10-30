@@ -107,25 +107,40 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
         project_id=project_id
     )
     
-    project_files_ids = []
-    if process_request.file_id:
-        project_files_ids = [process_request.file_id]
-    else:
-        asset_model = await AssetModel.create_instance(
+    asset_model = await AssetModel.create_instance(
             db_client=request.app.db_client
+    )
+    
+    project_files_ids = {}
+    if process_request.file_id:
+        asset_record = await asset_model.get_asset_record(
+            asset_project_id=project.id,  # Use project.id which is an ObjectId
+            asset_name=process_request.file_id
         )
-        # Convert project.id to ObjectId if it's a string
-        project_id_obj = ObjectId(project.id) if isinstance(project.id, str) else project.id
-        # project.id is already an ObjectId
+        
+        if asset_record is None:
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "signal": ResponseSignal.FILE_ID_ERROR.value,
+                }
+            )
+        
+        project_files_ids = {
+            asset_record.id : asset_record.asset_name
+        }
+        
+    else:
+        # project.id is already an ObjectId from the Project model
         project_files = await asset_model.get_all_project_assets(
             asset_project_id=project.id,
             asset_type=AssetTypeEnum.FILE.value,
         )
        
-        project_files_ids = [
-            rec["asset_name"]
+        project_files_ids = {
+            rec.id : rec.asset_name
             for rec in project_files
-        ]
+        }
 
     if len(project_files_ids) == 0:
         logger.error(f"No files found for project {project_id}. Project ID in DB: {project.id}")
@@ -154,7 +169,7 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
         deleted_count = await chunk_model.delete_chunks_by_project_id(project_id=project.id)
         logger.info(f"Deleted {deleted_count} existing chunks for project {project_id}")
     
-    for file_id in project_files_ids:  
+    for asset_id, file_id in project_files_ids.items():  
         file_content = process_controller.get_file_content(file_id=file_id)
         
         if file_content is None:
@@ -182,9 +197,10 @@ async def process_endpoint(request: Request, project_id: str, process_request: P
                 chunk_content = chunk.page_content,
                 chunk_metadata = chunk.metadata,
                 chunk_order = i+1,
-                chunk_project_id = project.id,
+                chunk_project_id = project.id,  # Already an ObjectId
+                chunk_asset_id = asset_id  # Already an ObjectId from the dict key
             )
-            for i, chunk in enumerate (file_chunks)
+            for i, chunk in enumerate(file_chunks)
         ]
         
         no_records += await chunk_model.insert_many_chunks(chunks = file_chunks_records)

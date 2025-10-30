@@ -16,11 +16,6 @@ class Asset(BaseModel):
     asset_size: int = Field(ge=0,default=None)
     asset_config: dict = Field(default=None)
     asset_pushed_at: datetime = Field(default=datetime.now(timezone.utc))
-    
-    model_config = ConfigDict(
-            arbitrary_types_allowed=True,
-            populate_by_name=True
-    )
         
     @classmethod
     def get_indexes(cls):
