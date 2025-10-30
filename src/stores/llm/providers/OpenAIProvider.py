@@ -74,7 +74,8 @@ class OpenAIProvider(LLMInterface):
 
         return response.choices[0].message.content
 
-    def embed_text(self, text: str, document_type: str=None):
+    def embed_text(self, prompt: str, document_type: str=None):
+        
         if not self.client:
             self.logger.error(f"OpenAI client is not initialized.")
             return None
@@ -85,7 +86,7 @@ class OpenAIProvider(LLMInterface):
 
         response = self.client.embeddings.create(
             model=self.embedding_model_id,
-            input=text,
+            input=prompt,
         )
         
         if not response or not response.data or len(response.data) == 0 or not response.data[0].embedding:
