@@ -24,7 +24,7 @@ class LLMProviderFactory:
                 default_generation_temperature=self.config.GENERATION_DAFAULT_TEMPERATURE,
             )
 
-        elif provider_name == LLMEnums.OLLAMA.value:
-            pass  # Implement OllamaProvider creation logic here
+        # elif provider_name == LLMEnums.OLLAMA.value:
+        #     pass  # Implement OllamaProvider creation logic here
 
         return None
