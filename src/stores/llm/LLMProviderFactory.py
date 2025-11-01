@@ -1,5 +1,5 @@
 from .LLMEnums import LLMEnums
-from .providers import OpenAIProvider, CoHereProvider, OllamaProvider
+from .providers import OpenAIProvider, CoHereProvider
 
 
 class LLMProviderFactory:
@@ -23,8 +23,5 @@ class LLMProviderFactory:
                 default_generation_max_output_tokens=self.config.GENERATION_DAFAULT_MAX_TOKENS,
                 default_generation_temperature=self.config.GENERATION_DAFAULT_TEMPERATURE,
             )
-
-        # elif provider_name == LLMEnums.OLLAMA.value:
-        #     pass  # Implement OllamaProvider creation logic here
 
         return None
