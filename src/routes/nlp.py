@@ -94,6 +94,7 @@ async def get_project_index_info(
         vectordb_client=request.app.vectordb_client,
         generation_client=request.app.generation_client,
         embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
     )
 
     collection_info = nlp_controller.get_vector_db_collection_info(project=project)
@@ -120,6 +121,7 @@ async def search_index(
         vectordb_client=request.app.vectordb_client,
         generation_client=request.app.generation_client,
         embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
     )
 
     results = nlp_controller.search_vector_db_collection(
@@ -137,6 +139,39 @@ async def search_index(
     return JSONResponse(
         content={
             "Signal": ResponseSignal.VECTORDB_SEARCH_SUCCESS.value,
-            "results": results,
+            "results": [result.dict() for result in results],
         },
+    )
+
+
+@nlp_router.post("/index/answer/{project_id}")
+async def answer_rag(request: Request, project_id: str, search_request: SearchRequest):
+
+    project_model = await ProjectModel.create_instance(db_client=request.app.db_client)
+    project = await project_model.get_or_create_project(project_id=project_id)
+
+    nlp_controller = NLPController(
+        vectordb_client=request.app.vectordb_client,
+        generation_client=request.app.generation_client,
+        embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
+    )
+
+    answer, full_prompt, chat_history = nlp_controller.answer_rag_question(
+        project=project, query=search_request.text, limit=search_request.limit
+    )
+
+    if not answer:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"Signal": ResponseSignal.RAG_ANSWER_ERROR.value},
+        )
+
+    return JSONResponse(
+        content={
+            "signal": ResponseSignal.RAG_ANSWER_SUCCESS.value,
+            "answer": answer,
+            "full_prompt": full_prompt,
+            "chat_history": chat_history,
+        }
     )
