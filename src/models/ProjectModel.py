@@ -47,7 +47,6 @@ class ProjectModel(BaseDataModel):
             
             return project
         
-        # _id is already an ObjectId from MongoDB, no need to convert
         return Project.model_validate(record)
         if '_id' in record:
             record['_id'] = str(record['_id'])
