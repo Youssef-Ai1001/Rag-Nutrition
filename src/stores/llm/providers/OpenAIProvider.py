@@ -100,5 +100,5 @@ class OpenAIProvider(LLMInterface):
     def construct_prompt(self, prompt:str, role:str):
         return {
             "role": role,
-            "content": self.process_prompt(prompt)
+            "content": prompt # self.process_prompt(prompt)
         }

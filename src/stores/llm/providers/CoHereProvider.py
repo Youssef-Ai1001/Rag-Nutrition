@@ -29,7 +29,7 @@ class CoHereProvider(LLMInterface):
         self.client = cohere.Client(api_key=self.api_key)
 
         self.enums = CoHereEnums
-        
+
         self.logger = logging.getLogger(__name__)
 
     def set_generation_model(self, model_id: str):
@@ -128,4 +128,7 @@ class CoHereProvider(LLMInterface):
         return embeddings[0]
 
     def construct_prompt(self, prompt: str, role: str):
-        return {"role": role, "text": self.process_prompt(prompt)}
+        return {
+            "role": role,
+            "text": prompt  # self.process_prompt(prompt)}
+        }  

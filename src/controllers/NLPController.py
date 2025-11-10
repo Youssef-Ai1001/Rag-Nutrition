@@ -20,11 +20,11 @@ class NLPController(BaseController):
         return f"Collection_{project_id}".strip()
 
     def reset_vector_db_collection(self, project: Project):
-        collection_name = self.create_collection_name(project_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.id)
         return self.vectordb_client.delete_collection(collection_name=collection_name)
 
     def get_vector_db_collection_info(self, project: Project):
-        collection_name = self.create_collection_name(project_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.id)
         collection_info = self.vectordb_client.get_collection_info(
             collection_name=collection_name
         )
@@ -38,7 +38,7 @@ class NLPController(BaseController):
         do_reset: bool = False,
     ):
         # step 1 : get collection name
-        collection_name = self.create_collection_name(project_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.id)
 
         # step 2 : manage items
         texts = [rec.chunk_content for rec in chunks]
@@ -71,7 +71,7 @@ class NLPController(BaseController):
 
     def search_vector_db_collection(self, project: Project, text: str, limit: int = 5):
         # step 1 : get collection name
-        collection_name = self.create_collection_name(project_id=project.project_id)
+        collection_name = self.create_collection_name(project_id=project.id)
 
         # step 2 : get prompt embedding vector
         vector = self.embedding_client.embed_text(
@@ -109,7 +109,7 @@ class NLPController(BaseController):
         documents_prompt = "\n".join([
             self.template_parser.get("rag", "document_prompt", {
                     "doc_num": idx+1,
-                    "chunk_text": doc.text,
+                    "chunk_text": self.generation_client.process_prompt(doc.text),
                 })
             for idx, doc in enumerate(retrieved_documents)
         ])
