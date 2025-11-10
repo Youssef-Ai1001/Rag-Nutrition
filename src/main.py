@@ -15,10 +15,6 @@ app = FastAPI()
 async def startup_span():
     settings = get_settings()
 
-    # Mongo DB
-    # app.mongo_conn = AsyncIOMotorClient(settings.MOBGODB_URL)
-    # app.db_client = app.mongo_conn[settings.MONGODB_DATABASE]
-
     # Postgres DB
     postgres_conn = f"postgresql+asyncpg://{settings.POSTGRES_USERNAME}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_MAIN_DATABASE}"
     app.db_engine = create_async_engine(postgres_conn)
@@ -58,7 +54,6 @@ async def startup_span():
 
 @app.on_event("shutdown")
 async def shutdown_span():
-    # app.mongo_conn.close()
     app.db_engine.dispose()
     app.vectordb_client.disconnect()
 

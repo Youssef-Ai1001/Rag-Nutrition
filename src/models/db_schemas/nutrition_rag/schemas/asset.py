@@ -1,9 +1,9 @@
 from .nutrition_rag_base import SQLAlchemyBase
 from sqlalchemy import Column, INTEGER, DateTime, func, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-import uuid
 from sqlalchemy.orm import relationship
 from sqlalchemy import Index
+import uuid
 
 
 class Asset(SQLAlchemyBase):
