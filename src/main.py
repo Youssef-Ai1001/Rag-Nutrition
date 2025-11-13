@@ -1,14 +1,17 @@
 from fastapi import FastAPI
 from routes import base, data, nlp
-# from motor.motor_asyncio import AsyncIOMotorClient
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
 from stores.llm.templates.TemplateParser import TemplateParser
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from utils.metrics import setup_metrics
 
 app = FastAPI()
+
+# Setup Prometheus metrics
+setup_metrics(app)
 
 
 @app.on_event("startup")
