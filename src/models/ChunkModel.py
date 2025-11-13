@@ -16,7 +16,6 @@ class ChunkModel(BaseDataModel):
         instance = cls(db_client)
         return instance
 
-
     async def insert_chunk(self, chunk: DataChunk):
         async with self.db_client() as session:
             async with session.begin():

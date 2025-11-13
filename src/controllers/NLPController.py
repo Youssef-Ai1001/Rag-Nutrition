@@ -106,32 +106,38 @@ class NLPController(BaseController):
         # step 2: construct LLM prompt
         system_prompt = self.template_parser.get("rag", "system_prompt")
 
-        documents_prompt = "\n".join([
-            self.template_parser.get("rag", "document_prompt", {
-                    "doc_num": idx+1,
-                    "chunk_text": self.generation_client.process_prompt(doc.text),
-                })
-            for idx, doc in enumerate(retrieved_documents)
-        ])
+        documents_prompt = "\n".join(
+            [
+                self.template_parser.get(
+                    "rag",
+                    "document_prompt",
+                    {
+                        "doc_num": idx + 1,
+                        "chunk_text": self.generation_client.process_prompt(doc.text),
+                    },
+                )
+                for idx, doc in enumerate(retrieved_documents)
+            ]
+        )
 
-        footer_prompt = self.template_parser.get("rag", "footer_prompt", {
-            "query": query
-        })
-        
+        footer_prompt = self.template_parser.get(
+            "rag", "footer_prompt", {"query": query}
+        )
+
         # step 3: Construct Generation Client Prompts
         chat_history = [
             self.generation_client.construct_prompt(
-                prompt = system_prompt,
-                role = self.generation_client.enums.SYSTEM.value,
+                prompt=system_prompt,
+                role=self.generation_client.enums.SYSTEM.value,
             )
         ]
-        
+
         full_prompt = "\n\n".join([documents_prompt, footer_prompt])
-        
+
         # step4: Retrieve the Answer
         answer = self.generation_client.generate_text(
-            prompt = full_prompt,
-            chat_history = chat_history,
+            prompt=full_prompt,
+            chat_history=chat_history,
         )
-        
+
         return answer, full_prompt, chat_history
